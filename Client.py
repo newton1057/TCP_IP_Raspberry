@@ -1,31 +1,23 @@
 import socket
 
-# Configuración del servidor
-host = '0.0.0.0'  # Escucha en todas las interfaces disponibles
-port = 12345       # Puerto de escucha
+# Configuración del cliente
+host = 'IP_de_la_Raspberry_Pi'  # Reemplaza con la dirección IP de tu Raspberry Pi
+port = 12345                      # Puerto de conexión
 
 # Crear un socket TCP/IP
-server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-# Vincular el socket al host y puerto
-server_socket.bind((host, port))
+# Conectar al servidor
+client_socket.connect((host, port))
+print(f"Conectado a {host}:{port}")
 
-# Escuchar conexiones entrantes (máximo 1 en espera)
-server_socket.listen(1)
+# Enviar datos al servidor
+message = "Hola desde el cliente"
+client_socket.sendall(message.encode('utf-8'))
 
-print(f"Esperando conexiones en {host}:{port}...")
-
-# Aceptar la conexión entrante
-client_socket, client_address = server_socket.accept()
-print(f"Conexión aceptada desde {client_address}")
-
-# Recibir datos y enviar una respuesta
+# Recibir la respuesta del servidor
 data = client_socket.recv(1024)
-print(f"Datos recibidos: {data.decode('utf-8')}")
+print(f"Respuesta del servidor: {data.decode('utf-8')}")
 
-response = "¡Conexión exitosa! Gracias por enviar datos."
-client_socket.sendall(response.encode('utf-8'))
-
-# Cerrar sockets
+# Cerrar el socket del cliente
 client_socket.close()
-server_socket.close()
